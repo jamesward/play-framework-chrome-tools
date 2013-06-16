@@ -23,10 +23,19 @@ chrome.extension.sendRequest({method: "getLocalStorage", key: "playEditorURL"}, 
 			var line = lineMatch[1];
 
 			var editorInvocationURL = playEditorURL.replace('$file', file).replace('$line', line);
-			document.body.innerHTML = document.body.innerHTML.replace(filePattern, "<span style='color: #FFA500; text-decoration: underline; cursor: pointer;' id='openInEditor'>" + file + "</span>");
+			var id = 'openInEditorAjax';
+			if (editorInvocationURL.indexOf('http') == -1) {
+				id = 'openInEditor';
+			}
+			document.body.innerHTML = document.body.innerHTML.replace(filePattern, "<span style='color: #FFA500; text-decoration: underline; cursor: pointer;' id='" + id + "'>" + file + "</span>");
 
-			$('#openInEditor').on('click', function() {
+
+
+			$('#openInEditorAjax').on('click', function() {
 				$.get(editorInvocationURL);
+			});
+			$('#openInEditor').on('click', function() {
+				window.open(editorInvocationURL, '_blank');
 			});
 		}
 	}
