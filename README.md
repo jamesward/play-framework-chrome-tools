@@ -6,7 +6,9 @@ When using the Play Auto Refresh SBT plugin, the browser reloads the page at eac
 
 ## Open Errors in Editor
 
-It is possible to configure a URL in the [extension options](chrome-extension://dchhggpgbommpcjpogaploblnpldbmen/options.html) to which the absolute path to the file in error and the line triggering the error are passed.
+It is possible to configure a URL in the extension options to which the absolute path to the file in error and the line triggering the error are passed.  Access the extensions options by pasting the following URL into your browser:
+
+    chrome-extension://dchhggpgbommpcjpogaploblnpldbmen/options.html
 
 This can be used by editors to directly jump to the location of an error in the code.
 
