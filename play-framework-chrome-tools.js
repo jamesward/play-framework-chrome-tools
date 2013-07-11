@@ -17,8 +17,7 @@ chrome.extension.sendRequest({method: "getLocalStorage", key: "playEditorURL"}, 
 
 		var fileMatch = document.body.textContent.match(filePattern);
 		var lineMatch = document.body.textContent.match(linePattern);
-
-		if(fileMatch) {
+		if(fileMatch && lineMatch) {
 			var file = fileMatch[1];
 			var line = lineMatch[1];
 
