@@ -3,7 +3,7 @@
 
   "name": "Play Framework Tools",
   "description": "This extension helps developers more efficiently build apps with the Play Framework.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "icons": {
     "128": "icon_128.png"
   },
@@ -14,7 +14,7 @@
   "content_scripts": [
     {
       "matches": ["http://localhost:9000/*", "http://*.localhost:9000/*"],
-      "js": ["jquery-1.9.0.min.js", "play-framework-chrome-tools.js"],
+      "js": ["jquery-1.9.0.min.js", "jquery.min.map", "play-framework-chrome-tools.js"],
       "run_at": "document_end"
     }
   ]
