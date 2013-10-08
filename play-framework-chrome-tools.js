@@ -1,3 +1,16 @@
+// Reset scroll bar from previous position
+$( document ).ready(function() {
+	if(localStorage.getItem('offset') != null){
+		$(window).scrollTop(localStorage.getItem('offset'))
+	} 
+
+	$(document).scroll(function(){ 
+		//save new position
+		var offset = $(window).scrollTop()
+		localStorage.setItem('offset', offset)
+	});
+});
+
 // Play Auto Refresh
 var ws = new WebSocket("ws://localhost:9001")
 ws.onmessage = function(event) {
