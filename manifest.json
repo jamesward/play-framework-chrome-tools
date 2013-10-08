@@ -3,7 +3,7 @@
 
   "name": "Play Framework Tools",
   "description": "This extension helps developers more efficiently build apps with the Play Framework.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "icons": {
     "128": "icon_128.png"
   },
