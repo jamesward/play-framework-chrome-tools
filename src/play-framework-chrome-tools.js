@@ -22,27 +22,24 @@ ws.onmessage = function(event) {
 };
 
 // Open in editor
-var filePattern = /In ([^ ]+)/;
-var linePattern = /at line ([^.]+)/;
+// E.g. /path/to/file.suffix:6
+var fileLinePattern = /In\s*([^ ]*):([0-9]*)/;
 
 chrome.extension.sendRequest({method: "getLocalStorage", key: "playEditorURL"}, function(response) {
 	var playEditorURL = response.data;
 	if (playEditorURL) {
-
-		var fileMatch = document.body.textContent.match(filePattern);
-		var lineMatch = document.body.textContent.match(linePattern);
-		if(fileMatch && lineMatch) {
-			var file = fileMatch[1];
-			var line = lineMatch[1];
+		var fileAndLineMatch = document.body.textContent.match(fileLinePattern);
+		if (fileAndLineMatch) {
+			var file = fileAndLineMatch[1];
+			var line = fileAndLineMatch[2];
 
 			var editorInvocationURL = playEditorURL.replace('$file', file).replace('$line', line);
 			var id = 'openInEditorAjax';
 			if (editorInvocationURL.indexOf('http') == -1) {
 				id = 'openInEditor';
 			}
-			document.body.innerHTML = document.body.innerHTML.replace(filePattern, "<span style='color: #FFA500; text-decoration: underline; cursor: pointer;' id='" + id + "'>" + file + "</span>");
-
-
+			document.body.innerHTML = document.body.innerHTML.replace(fileLinePattern,
+          "<span style='color: #FFA500; text-decoration: underline; cursor: pointer;' id='" + id + "'>In " + file + ":" + line + "</span>");
 
 			$('#openInEditorAjax').on('click', function() {
 				$.get(editorInvocationURL);
