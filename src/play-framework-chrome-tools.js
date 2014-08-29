@@ -56,19 +56,26 @@ chrome.extension.sendRequest({method: "getLocalStorage", key: "playEditorURL"}, 
 
     var tryPlay23 = function () {
       // Error Message 2.3: /path/to/file.suffix:6
-      var fileLinePattern = /In\s*([^ ]*):([0-9]*)/;
-      var fileAndLineMatch = document.getElementsByTagName('h2')[0].textContent.match(fileLinePattern);
-
-      if (fileAndLineMatch) {
-        var file = fileAndLineMatch[1];
-        var line = fileAndLineMatch[2];
-        replaceErrorMessageWithLink(file, line, function (html, id) {
-          return html.replace(fileLinePattern,
-              "In <span style='color: #FFA500; text-decoration: underline; cursor: pointer;' id='" +
-              id + "'>" + file + ":" + line + "</span>");
-        });
+      var errorElement = document.getElementsByTagName('h2')[0];
+      if (!errorElement) {
+        return false;
       }
-      return fileAndLineMatch;
+
+      var fileLinePattern = /In\s*([^ ]*):([0-9]*)/;
+      var fileAndLineMatch = errorElement.textContent.match(fileLinePattern);
+      if (!fileAndLineMatch) {
+        return false;
+      }
+
+      var file = fileAndLineMatch[1];
+      var line = fileAndLineMatch[2];
+      replaceErrorMessageWithLink(file, line, function (html, id) {
+        return html.replace(fileLinePattern,
+            "In <span style='color: #FFA500; text-decoration: underline; cursor: pointer;' id='" +
+            id + "'>" + file + ":" + line + "</span>");
+      });
+
+      return true;
     };
 
     var tryPlay22 = function () {
