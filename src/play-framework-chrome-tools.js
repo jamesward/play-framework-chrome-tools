@@ -34,23 +34,17 @@ ws.onmessage = function (event) {
 
 // Open in editor
 // ~~~
-// E.g. /path/to/file.suffix:6
-var fileLinePattern = /In\s*([^ ]*):([0-9]*)/;
 chrome.extension.sendRequest({method: "getLocalStorage", key: "playEditorURL"}, function (response) {
   var playEditorURL = response.data;
   if (playEditorURL) {
-    var fileAndLineMatch = document.body.textContent.match(fileLinePattern);
-    if (fileAndLineMatch) {
-      var file = fileAndLineMatch[1];
-      var line = fileAndLineMatch[2];
 
+    var replaceErrorMessageWithLink = function (file, line, replaceFn) {
       var editorInvocationURL = playEditorURL.replace('$file', file).replace('$line', line);
       var id = 'openInEditorAjax';
       if (editorInvocationURL.indexOf('http') == -1) {
         id = 'openInEditor';
       }
-      document.body.innerHTML = document.body.innerHTML.replace(fileLinePattern,
-          "<span style='color: #FFA500; text-decoration: underline; cursor: pointer;' id='" + id + "'>In " + file + ":" + line + "</span>");
+      document.body.innerHTML = replaceFn(document.body.innerHTML, id);
 
       $('#openInEditorAjax').on('click', function () {
         $.get(editorInvocationURL);
@@ -58,6 +52,47 @@ chrome.extension.sendRequest({method: "getLocalStorage", key: "playEditorURL"}, 
       $('#openInEditor').on('click', function () {
         window.open(editorInvocationURL, '_blank');
       });
+    };
+
+    var tryPlay23 = function () {
+      // Error Message 2.3: /path/to/file.suffix:6
+      var fileLinePattern = /In\s*([^ ]*):([0-9]*)/;
+      var fileAndLineMatch = document.getElementsByTagName('h2')[0].textContent.match(fileLinePattern);
+
+      if (fileAndLineMatch) {
+        var file = fileAndLineMatch[1];
+        var line = fileAndLineMatch[2];
+        replaceErrorMessageWithLink(file, line, function (html, id) {
+          return html.replace(fileLinePattern,
+              "In <span style='color: #FFA500; text-decoration: underline; cursor: pointer;' id='" +
+              id + "'>" + file + ":" + line + "</span>");
+        });
+      }
+      return fileAndLineMatch;
+    };
+
+    var tryPlay22 = function () {
+      // Error Message 2.0-2.2: In /path/to/file.suffix at line 6
+      var filePattern = /In ([^ ]+)/;
+      var linePattern = /at line ([^.]+)/;
+
+      var fileMatch = document.body.textContent.match(filePattern);
+      var lineMatch = document.body.textContent.match(linePattern);
+      if (fileMatch && lineMatch) {
+        var file = fileMatch[1];
+        var line = lineMatch[1];
+        replaceErrorMessageWithLink(file, line, function (html, id) {
+          return html.replace(filePattern,
+              "In <span style='color: #FFA500; text-decoration: underline; cursor: pointer;' id='" +
+              id + "'>" + file + "</span>"
+          )
+        });
+      }
+      return fileMatch && lineMatch;
+    };
+
+    if (!tryPlay23()) {
+      tryPlay22();
     }
   }
 });
